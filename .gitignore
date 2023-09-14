@@ -1,0 +1,8 @@
+# track folders but not content (except setup_help)
+data/*
+results/*
+setupFiles/*
+
+!setupFiles/setup_help.json
+!data/.gitkeep
+!data/.gitkeep
