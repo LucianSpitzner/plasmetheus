@@ -1,3 +1,4 @@
+name: plasm
 channels:
   - conda-forge
   - defaults
