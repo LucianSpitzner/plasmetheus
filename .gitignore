@@ -2,6 +2,8 @@
 data/*
 results/*
 setupFiles/*
+resources/__pycache__
+
 
 !setupFiles/setup_help.json
 !data/.gitkeep

@@ -598,15 +598,9 @@ class plasmetheusSimulation:
 
 
 
-
-
-
-
-
-
         
 #%%
-# cool voxel: 20747624
+
 mysim = plasmetheusSimulation('fiducial')
     
 mysim.setup()
