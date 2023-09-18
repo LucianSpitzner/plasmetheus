@@ -21,3 +21,6 @@ sphinx:
 formats:
   - pdf
   - epub
+
+conda:
+  environment: environment.yml
