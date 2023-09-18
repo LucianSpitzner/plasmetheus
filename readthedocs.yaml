@@ -5,11 +5,7 @@ build:
   tools:
     python: "mambaforge-22.9"
 
-python:
-  install:
-    - requirements: docs/requirements.txt
-    - method: pip
-      path: .
+
       
 sphinx:
   configuration: docs/source/conf.py
