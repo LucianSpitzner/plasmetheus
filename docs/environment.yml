@@ -2,6 +2,7 @@ name: plasm
 channels:
   - conda-forge
   - defaults
+  - pip
 dependencies:
   - python=3.11.4
   - numpy
