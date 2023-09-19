@@ -1,5 +1,5 @@
 Plasmetheus has its documentation hosted on Read the Docs.
-===================================
+=============
 
 
 .. note::
@@ -7,7 +7,7 @@ Plasmetheus has its documentation hosted on Read the Docs.
    This project is under active development.
 
 Contents
---------
+-------------
 
 .. toctree::
    :maxdepth: 2
