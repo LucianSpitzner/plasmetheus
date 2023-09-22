@@ -1,0 +1,17 @@
+name: plasm
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11.4
+  - numpy
+  - h5py
+  - pandas
+  - matplotlib
+  - tqdm
+  - ipykernel
+  - cookiecutter
+  - gitpython
+  - pip
+  - sphinx
+  - sphinx-rtd-theme

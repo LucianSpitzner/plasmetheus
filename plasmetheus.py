@@ -601,8 +601,8 @@ class plasmetheusSimulation:
         
 #%%
 
-mysim = plasmetheusSimulation('fiducial')
+#mysim = plasmetheusSimulation('fiducial')
     
-mysim.setup()
+#mysim.setup()
 
-mysim.simulate()
+#mysim.simulate()
