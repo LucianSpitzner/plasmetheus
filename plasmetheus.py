@@ -17,6 +17,7 @@ import sys
 import json
 import resources.constants as const
 import matplotlib.pyplot as plt
+from joblib import Parallel, delayed
 
 DIRPATH = os.path.dirname(os.path.abspath(__file__))
 
@@ -423,8 +424,6 @@ class plasmetheusSimulation:
         
     def simulate(self):
         
-        binwidths = np.array([])
-        
         nparts = np.array([])
         
         all_tau = np.zeros((self.simParams['ns'], 
@@ -440,7 +439,9 @@ class plasmetheusSimulation:
             
             # select species and group by column
             columnTable = (self.partData[self.partData['sid'] == self.fldParams[spec]]).groupby('loc_id_column')
-             
+            
+            binwidths = np.zeros((columnTable.ngroups))
+
             print('done!')
             
             
@@ -454,12 +455,17 @@ class plasmetheusSimulation:
             
             print('Calculating optical depth...')
             
-            for col_id, column in tqdm(columnTable):
+            # parellelization:
+
+            # list_of_CCFs, list_of_CCF_Es, list_of_T_sums = zip(*Parallel(n_jobs=NC,verbose=2*NT)(delayed(do_xcor)(i)))
+
+            # define the function that will get parallelized: take one column as input, and calculate the optical depth per wavelength
+
+            def calc_col_tau(idx, col_id, column):
                 
                 column_tau = np.zeros((self.simParams['gridLen']))
                                    
                 for vid, voxel in column.groupby('loc_id'):
-                    
                     
                     if len(voxel['vx']) == 1:
                         
@@ -469,9 +475,9 @@ class plasmetheusSimulation:
                         # arbitrarily setting bin width to 1 km/s (1e5cm/s)
                         deltaV = 1e5
                         
-                        binwidths = np.append(binwidths, deltaV)
+                        #(self.binwidths).append(deltaV)
                         
-                        nparts = np.append(nparts, 1)
+                        #nparts = np.append(nparts, 1)
                         
                        
                         vel_x = np.array(v_m)[None, :, None]
@@ -509,11 +515,12 @@ class plasmetheusSimulation:
 
                         deltaV = (v[1] - v[0])
                         
+                        #fix binwidth saving
                         # save binwidths for statistics 
-                        binwidths = np.append(binwidths, deltaV)
+                        #binwidths = np.append(binwidths, deltaV)
                         
                         # number of particles
-                        nparts = np.append(nparts, len(voxel['vx']))
+                        #nparts = np.append(nparts, len(voxel['vx']))
                         
                         # velocities and their probabilities in the voxel
                         pv_m, v_m = pv[pv_mask], v[:-1][pv_mask] + deltaV/2
@@ -539,21 +546,31 @@ class plasmetheusSimulation:
                                                          self.fldParams['nz']))
                 
                 # add the optical depth
-                all_tau[specID, colY, colZ] = column_tau
+                #all_tau[specID, colY, colZ] = column_tau
+
+                return column_tau
+
         
+
+        results = Parallel(n_jobs=50, verbose=1)(
+            delayed(calc_col_tau)(idx,col_id,column) for idx, (col_id, column) in tqdm(enumerate(columnTable))
+        )
+
+        # missing multi-species implementation. save result in matrix "all_tau" for overlapping wavelengths
+        # in different species (make it global?)
         print('Calculation done. Summing over all species and calculating absorption')
         
-        tot_tau = np.sum(all_tau, axis=0)
+        #tot_tau = np.sum(all_tau, axis=0)
         
-        absorption = np.e**(-tot_tau)
+        absorption = np.e**(-np.stack(results, axis=0))
 
-        # mask empty columns
-        tot_mask = np.sum(np.abs(tot_tau), axis=2) != 0
+        # # mask empty columns
+        # tot_mask = np.sum(np.abs(tot_tau), axis=2)
         
-        #number of non-empty columns
-        nCols = np.sum(tot_mask)
+        # #number of non-empty columns
+        # nCols = np.sum(tot_mask)
         
-        print(f'Number of non-empty columns: {nCols}')
+        # print(f'Number of non-empty columns: {nCols}')
         
         # surface area of a single column in cm**2
         columnArea = self.fldParams['dy'] * self.fldParams['dz'] * 1e4
@@ -561,16 +578,18 @@ class plasmetheusSimulation:
         stellarArea = np.pi * self.simParams['stellarRad']**2
         
         planetArea = np.pi * (self.fldParams['obs_radius']*1e2)**2
+
+        nCols = len(absorption)
         
         # relative area of planet, cloud and star
-        tot_abs = ((np.sum(absorption[tot_mask], axis=0) * columnArea) +
+        tot_abs = ((np.sum(absorption, axis=0) * columnArea) +
                stellarArea - nCols*columnArea - planetArea)/ stellarArea 
         
         # save optical depth at highest absorbing wavelength
         # min, since the signal is lowest at that wavelength
-        maxabs = np.argmin(tot_abs)
+        # maxabs = np.argmin(tot_abs)
         
-        maxtau = tot_tau[:,:,maxabs]
+        # maxtau = tot_tau[:,:,maxabs]
         
         print('Saving result')
         
@@ -578,7 +597,7 @@ class plasmetheusSimulation:
             
             resFile['absorption'] = tot_abs
             
-            resFile['opticalDepth'] = maxtau
+            #resFile['opticalDepth'] = maxtau
             
             resFile['wavelengths'] = self.simParams['grid_wvl']
             
@@ -601,7 +620,7 @@ class plasmetheusSimulation:
         
 #%%
 
-mysim = plasmetheusSimulation('fiducial')
+mysim = plasmetheusSimulation('medium_dipole')
     
 mysim.setup()
 
