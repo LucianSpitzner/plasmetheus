@@ -38,7 +38,7 @@ class plasmetheusSimulation:
 
         """
         
-        self.simParams = {}
+        
         self.fldParams = {}
         self.lineParams = {}
         self.simRes = {}
@@ -53,6 +53,9 @@ class plasmetheusSimulation:
         # change certain values from SI to CGS
         
         self.simParams["stellarRad"] = self.simParams["stellarRad"] * const.R_sun
+
+        # add name
+        self.simParams['setupFileName'] = setupFileName
 
 
     def readLineList(self, species):
@@ -321,16 +324,17 @@ class plasmetheusSimulation:
             zmin, zmax = self.fldParams["zmin"], self.fldParams["zmax"]
             pl_rad = self.fldParams["obs_radius"]
             
-            
+            print('    Reading positions')
             # read positions of non-H particles
             rx = np.array(partFile['rx'])[hydrogenMask]
             ry = np.array(partFile['ry'])[hydrogenMask]
             rz = np.array(partFile['rz'])[hydrogenMask]
             
+            print('    Reading velocities')
             # read x-components of velocities of non-H particles
             vx = np.array(partFile['vx'])[hydrogenMask]
             
-            
+            print('    constructing grid')
             # construct the grid
             xrange, xstep = np.linspace(xmin, xmax, num=nx, endpoint=False, retstep=True)
             
@@ -339,21 +343,21 @@ class plasmetheusSimulation:
             zrange, zstep = np.linspace(zmin, zmax, num=nz, endpoint=False, retstep=True)
             
             # find particles position in x,y,z index coordinates
-
+            print('    locating particles')
             xpos = np.searchsorted(xrange, rx) - 1
 
             ypos = np.searchsorted(yrange, ry) - 1
 
             zpos = np.searchsorted(zrange, rz) - 1
             
-            
+            print('    find 2d and 3d flattened index')
             # flatten 3-dim index (voxels)
             loc_id = np.ravel_multi_index((xpos, ypos, zpos), (nx, ny, nz), mode='clip')
             
             # flatten 2-dim index (columns)
             loc_id_column = np.ravel_multi_index((ypos, zpos), (ny, nz), mode='clip')                         
-            
-            
+            print(len(loc_id_column))
+            print('    removing obstructed particles')
             # exclude particles obstructed by planet
             vMask = np.sqrt(ry**2 + rz**2) > pl_rad
             
@@ -362,7 +366,7 @@ class plasmetheusSimulation:
             
 
             # create filtered h5py file
-            
+            print('    creating new file')
             with h5py.File(DIRPATH + '/data/' + self.simParams["dataFolder"] + "/" + self.simParams["partFileName"] + '_filtered.h5', 'w-') as newFile:
 
                 newFile['sid'] = newSid[vMask]
@@ -424,13 +428,15 @@ class plasmetheusSimulation:
         
     def simulate(self):
         
-        nparts = np.array([])
-        
         all_tau = np.zeros((self.simParams['ns'], 
                             self.fldParams['ny'], 
                             self.fldParams['nz'], 
                             self.simParams['gridLen']))
         
+        binwidths_all = []
+        nparts_all = []
+
+
         freq_x = self.simParams['grid_freq'][:, None, None]
                            
         for specID, spec in enumerate(self.simParams['specList']):
@@ -439,8 +445,6 @@ class plasmetheusSimulation:
             
             # select species and group by column
             columnTable = (self.partData[self.partData['sid'] == self.fldParams[spec]]).groupby('loc_id_column')
-            
-            binwidths = np.zeros((columnTable.ngroups))
 
             print('done!')
             
@@ -452,16 +456,10 @@ class plasmetheusSimulation:
 
             
             # calculating optical depth
-            
-            print('Calculating optical depth...')
-            
-            # parellelization:
 
-            # list_of_CCFs, list_of_CCF_Es, list_of_T_sums = zip(*Parallel(n_jobs=NC,verbose=2*NT)(delayed(do_xcor)(i)))
+            # parallelized function: take one column as input, and calculate the optical depth per wavelength
 
-            # define the function that will get parallelized: take one column as input, and calculate the optical depth per wavelength
-
-            def calc_col_tau(idx, col_id, column):
+            def calc_col_tau(col_id, column):
                 
                 column_tau = np.zeros((self.simParams['gridLen']))
                                    
@@ -528,7 +526,7 @@ class plasmetheusSimulation:
                         vel_x = v_m[None, :, None]
                         pv_x= pv_m[None, :, None]
 
-                        # here the magic happens
+                        # Thesis Spitzner Eq. 2.15 with broadcasting
                         tau_arr = deltaV * const.e**2 * np.pi / (const.m_e*const.c) * np.sum(
                                 (
                                     (4*gamma_x) / 
@@ -537,73 +535,79 @@ class plasmetheusSimulation:
                                 )
                                              
                         # multiply with the particle column density at the location (weight)
-                        
                         column_tau += (tau_arr * self.fldDens[spec][vid])
-                    
-        
                 
-                (colY, colZ) = np.unravel_index(col_id, (self.fldParams['ny'], 
+
+                # return optical depth, binwidth and number of particles, and col_id 
+                return (column_tau , deltaV, len(voxel['vx']), col_id)
+
+        
+            print(f"Calculating optical depth for {spec}")
+
+            spec_tau, binwidth, nparts, col_id = zip(*Parallel(n_jobs=30, verbose=1)(
+                delayed(calc_col_tau)(col_id, column) for col_id, column in tqdm(columnTable)
+                )
+            )
+
+            # find position of columns 
+            (colY, colZ) = np.unravel_index(col_id, (self.fldParams['ny'], 
                                                          self.fldParams['nz']))
-                
-                # add the optical depth
-                #all_tau[specID, colY, colZ] = column_tau
 
-                return column_tau
+            # add the tau in the specific column position 
+            all_tau[specID, colY, colZ] = spec_tau
 
-        
-
-        results = Parallel(n_jobs=50, verbose=1)(
-            delayed(calc_col_tau)(idx,col_id,column) for idx, (col_id, column) in tqdm(enumerate(columnTable))
-        )
-
-        # missing multi-species implementation. save result in matrix "all_tau" for overlapping wavelengths
-        # in different species (make it global?)
+            # save binwidths and particles for statistics
+            binwidths_all = np.append(binwidths_all, binwidth)
+            nparts_all = np.append(nparts_all, nparts)
+            
         print('Calculation done. Summing over all species and calculating absorption')
         
-        #tot_tau = np.sum(all_tau, axis=0)
+        # sum optical depth of all species
+        tot_tau = np.sum(all_tau, axis=0)
         
-        absorption = np.e**(-np.stack(results, axis=0))
+        # absorption with Beer-Lambert (Spitzner Thesis Eq. 2.6)
+        absorption = np.e**(-tot_tau)
 
-        # # mask empty columns
-        # tot_mask = np.sum(np.abs(tot_tau), axis=2)
+        # mask and count empty columns
+        tot_mask = np.sum(np.abs(tot_tau), axis=2) != 0
+
+        n_empty_cols = np.sum(tot_mask)
         
-        # #number of non-empty columns
-        # nCols = np.sum(tot_mask)
+        print(f'Number of non-empty columns: {n_empty_cols}')
         
-        # print(f'Number of non-empty columns: {nCols}')
-        
+        # Area calculation
         # surface area of a single column in cm**2
         columnArea = self.fldParams['dy'] * self.fldParams['dz'] * 1e4
         
+        # surface area of the star
         stellarArea = np.pi * self.simParams['stellarRad']**2
         
+        # surface area of the planet
         planetArea = np.pi * (self.fldParams['obs_radius']*1e2)**2
-
-        nCols = len(absorption)
         
         # relative area of planet, cloud and star
-        tot_abs = ((np.sum(absorption, axis=0) * columnArea) +
-               stellarArea - nCols*columnArea - planetArea)/ stellarArea 
+        tot_abs = ((np.sum(absorption[tot_mask], axis=0) * columnArea) +
+               stellarArea - n_empty_cols*columnArea - planetArea)/ stellarArea 
         
         # save optical depth at highest absorbing wavelength
         # min, since the signal is lowest at that wavelength
-        # maxabs = np.argmin(tot_abs)
+        maxabs = np.argmin(tot_abs)
         
-        # maxtau = tot_tau[:,:,maxabs]
+        maxtau = tot_tau[:,:,maxabs]
         
         print('Saving result')
-        
-        with h5py.File(DIRPATH + '/results/' + self.simParams["fieldFileName"] + '_res.h5', 'w-') as resFile:
+
+        with h5py.File(DIRPATH + '/results/' + self.simParams['setupFileName'] + '_res.h5', 'w-') as resFile:
             
             resFile['absorption'] = tot_abs
             
-            #resFile['opticalDepth'] = maxtau
+            resFile['opticalDepth'] = maxtau
             
             resFile['wavelengths'] = self.simParams['grid_wvl']
             
-            resFile['binwidths'] = binwidths
+            resFile['binwidths'] = binwidths_all
             
-            resFile['partperVoxel'] = nparts
+            resFile['partperVoxel'] = nparts_all
 
             resFile.attrs['velBins'] = self.simParams['velBins']
             
