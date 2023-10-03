@@ -21,6 +21,14 @@ import matplotlib.pyplot as plt
 DIRPATH = os.path.dirname(os.path.abspath(__file__))
 
 class plasmetheusSimulation:
+    """
+    Class of the Plasmetheus simulation
+    Parameters
+    ----------
+    Returns
+    -------
+    None.
+    """
     
     
     def __init__(self, setupFileName):
