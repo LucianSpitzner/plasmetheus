@@ -544,7 +544,7 @@ class plasmetheusSimulation:
         
             print(f"Calculating optical depth for {spec}")
 
-            spec_tau, binwidth, nparts, col_id = zip(*Parallel(n_jobs=30, verbose=1)(
+            spec_tau, binwidth, nparts, col_id = zip(*Parallel(n_jobs=self.simParams["nCores"], verbose=1)(
                 delayed(calc_col_tau)(col_id, column) for col_id, column in tqdm(columnTable)
                 )
             )
@@ -620,12 +620,16 @@ class plasmetheusSimulation:
 
 
 
+if __name__ == '__main__':
 
+    if(len(sys.argv) != 2 ):
+
+        raise ValueError("Arguments are not set correctly!")
+
+    setupFileName = str(sys.argv[1]) 
+
+    mysim = plasmetheusSimulation(setupFileName)
         
-#%%
+    mysim.setup()
 
-mysim = plasmetheusSimulation('medium_dipole')
-    
-mysim.setup()
-
-mysim.simulate()
+    mysim.simulate()

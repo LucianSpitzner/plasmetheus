@@ -1,5 +1,6 @@
 {
 	"outputName": "simName",
+    "nCores": 20,
  	"minWavelength": 1000.0e-8,
 	"maxWavelength": 1200.0e-8,
 	"highResWidth": 2e-8,
