@@ -82,3 +82,21 @@ For each run of Plasmetheus, you can configure the settings within the .json fil
 
    nCores
       number of cores to use. Due to overheading, a number larger than 30 cores leads to a slowdown and is not recommended.
+
+
+
+
+
+.. _running:
+
+Running the code
+----------------
+
+Copy the setupFile and adjust the parameters as necessary. 
+To run the code, navigate into the plasmetheus folder using :code:'cd foo/plasmetheus'.
+Then, run the code with::
+
+   python3 plasmetheus.py <setupFileName>
+
+If the specific AMITIS simulation has not been analysed before, Plasmetheus will create a filtered particle file and place it into the
+corresponding data folder. Then, it will start the simulation.
