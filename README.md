@@ -20,4 +20,4 @@ The documentation can be found on [readthedocs](https://plasmetheus.readthedocs.
 Authors
 -------
 
-The project has been developed as part of the master's project by **Lucian Spitzner**, supervised by [**Jens Hoeijmakers**](https://github.com/Hoeijmakers). However, code structure of a model project by [**Andrea Gebek**'s Prometheus](https://github.com/andreagebek/Prometheus) has been used (their contributions are marked)
+The project has been developed as part of the master's project by **Lucian Spitzner**, supervised by [**Jens Hoeijmakers**](https://github.com/Hoeijmakers). However, code structure of a model project by [**Andrea Gebek**'s Prometheus](https://github.com/andreagebek/Prometheus) has been used (their contributions are marked).

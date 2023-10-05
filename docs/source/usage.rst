@@ -22,17 +22,17 @@ To use Plasmetheus, first downlaod it through git:
 
 The important files and folders created are the following
 
-* plasmetheus.py
+plasmetheus.py
     the the main script,
 
 .. _setupFiles:
-* setupFiles
-   folder that contains your setupFiles. Multiple setupFiles for the same AMITIS simulation can exist.
+setupFiles
+    folder that contains your setupFiles. Multiple setupFiles for the same AMITIS simulation can exist.
 
 .. _data:
-* data
-   folder for subfolders for each AMITIS simulation. Note that subfolders must be created by the user.
-   
+data
+    folder for subfolders for each AMITIS simulation. Note that subfolders must be created by the user.
+
 
 
 Setup
@@ -49,28 +49,38 @@ SetupFile
 ---------
 For each run of Plasmetheus, you can configure the settings with the .json files provided in the :ref:'setupFiles directory<setupFiles>'.
 
-* outputName
+outputName
    name of the plasmetheus simulation result file.
-* minWavelength and maxWavelength
+
+minWavelength and maxWavelength
    define the range of the simulation 
-* highResWidth
+
+highResWidth
    defines the region width around each line with high resolution (line centre +/- highResWidth/2).
-* resLow and resHigh
+
+resLow and resHigh
    defines the resolution of the two regions. Usually, changing this is not necessary.
 
-* specList
+
+specList
    the list of species to analyze in the simulation. Be away that they have to match with species included in the AMITIS simulation.
-* stellarRad
+
+stellarRad
    radius of the host star of the system
-* velBins
+
+velBins
    minimum number of bins in velocity domain. No change necessary (more info at (add hyperlink to explanation))
-*  maxBinWidth
+
+maxBinWidth
    limits the bins width (and therefore sets a lower bound for the number of velocity bins per voxel). Unit is in m/s (defaults to
    10_000 m/s = 10 km/s)
 
-* dataFolder
+
+dataFolder
    subfolder name of AMITIS simulation as specified by user
-* fieldFileName and partFileName
+
+fieldFileName and partFileName
    names of the AMITIS simulation files (without the .h5 ending)
-* "nCores"
+
+"nCores"
    number of cores to use. Due to overheading, a number larger than 30 cores leads to a slowdown and is not recommended.
