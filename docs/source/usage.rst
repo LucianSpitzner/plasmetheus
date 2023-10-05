@@ -13,7 +13,7 @@ Plasmetheus uses AMITIS files to produce absorption spectra of transiting exopla
 Installation
 ------------
 
-To use Plasmetheus, first downlaod it through git:
+To use Plasmetheus, first download it through git:
 
 .. code-block:: console
 
@@ -49,33 +49,25 @@ particle file (par), which contains six-dimensional spatial and velocity informa
 SetupFile
 ^^^^^^^^^
 For each run of Plasmetheus, you can configure the settings within the .json files.
-
-outputName
-   name of the plasmetheus simulation result file.
-
-minWavelength and maxWavelength
-   define the range of the simulation 
-
-highResWidth
-   defines the region width around each line with high resolution (line centre +/- highResWidth/2).
-
-resLow and resHigh
-   defines the resolution of the two regions. Usually, changing this is not necessary.
-
-
-specList
-   the list of species to analyze in the simulation. Be away that they have to match with species included in the AMITIS simulation.
-
-stellarRad
-   radius of the host star of the system
-
-velBins
-   minimum number of bins in velocity domain. No change necessary (more info at (add hyperlink to explanation))
-
-maxBinWidth
-   limits the bins width (and therefore sets a lower bound for the number of velocity bins per voxel). Unit is in m/s (defaults to
-   10_000 m/s = 10 km/s)
-
++------------+-----------------+
+|keyword     | description     |
++============+=================+
+|outputName  |name of the plasmetheus simulation result file|
++------------+-----------------+
+|minWavelength,maxWavelength|define the range of the simulation| 
++------------+-----------------+
+|highResWidth|defines the region width around each line with high resolution (line centre +/- highResWidth/2).|
++------------+-----------------+
+|resLow,resHigh| define the resolution of the two regions. Usually, changing this is not necessary.|
++------------+-----------------+
+|specList|the list of species to analyze in the simulation. Be away that they have to match with species included in the AMITIS simulation.|
++------------+-----------------+
+|stellarRad|radius of the host star of the system
++------------+-----------------+
+|velBins|minimum number of bins in velocity domain. No change necessary (more info at (add hyperlink to explanation))|
++------------+-----------------+
+|maxBinWidth|limits the bins width (and therefore sets a lower bound for the number of velocity bins per voxel). Unit is in m/s (defaults to 10_000 m/s = 10 km/s)|
++------------+-----------------+
 
 dataFolder
    subfolder name of AMITIS simulation as specified by user

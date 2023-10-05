@@ -11,6 +11,9 @@ Contents
 
 .. toctree::
    :maxdepth: 3
-
+   :caption: Tutorial
    usage
+
+.. toctree::
+   :caption: Code
    api
