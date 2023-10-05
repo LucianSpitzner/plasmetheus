@@ -50,6 +50,7 @@ SetupFile
 ^^^^^^^^^
 For each run of Plasmetheus, you can configure the settings within the .json files.
 
+.. table::
 +---------------------+------------------------------------------------------------+
 | keyword             | description                                                |
 +=====================+============================================================+
