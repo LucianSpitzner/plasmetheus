@@ -49,6 +49,7 @@ particle file (par), which contains six-dimensional spatial and velocity informa
 SetupFile
 ^^^^^^^^^
 For each run of Plasmetheus, you can configure the settings within the .json files.
+
 +---------------------+------------------------------------------------------------+
 | keyword             | description                                                |
 +=====================+============================================================+
