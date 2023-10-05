@@ -21,6 +21,10 @@ extensions = [
     'sphinx.ext.intersphinx',
 ]
 
+autodoc_default_options = {
+    'special-members': '__init__'
+}
+
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
     'sphinx': ('https://www.sphinx-doc.org/en/master/', None),

@@ -14,4 +14,3 @@ Contents
 
    usage
    api
-   modules
