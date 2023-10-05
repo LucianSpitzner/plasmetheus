@@ -48,46 +48,37 @@ particle file (par), which contains six-dimensional spatial and velocity informa
 
 SetupFile
 ^^^^^^^^^
-For each run of Plasmetheus, you can configure the settings within the .json files.
+For each run of Plasmetheus, you can configure the settings within the .json files:
 
-.. table::
-   :widths: auto
+   outputName
+      Name of the plasmetheus simulation result file
 
-   +---------------------+------------------------------------------------------------+
-   | keyword             | description                                                |
-   +=====================+============================================================+
-   | outputName          | Name of the plasmetheus simulation result file             |
-   +---------------------+------------------------------------------------------------+
-   | minWavelength,      | Define the range of the simulation.                        |
-   | maxWavelength       |                                                            |
-   +---------------------+------------------------------------------------------------+
-   | highResWidth        | Defines the region width around each line with high        |
-   |                     | resolution (line centre +/- highResWidth/2).               |
-   +---------------------+------------------------------------------------------------+
-   | resLow, resHigh     | Define the resolution of the two regions. Usually, changing|
-   |                     | this is not necessary.                                     |
-   +---------------------+------------------------------------------------------------+
-   | specList            | The list of species to analyze in the simulation. Be aware |
-   |                     | that they have to match with species included in the AMITIS|
-   |                     | simulation.                                                |
-   +---------------------+------------------------------------------------------------+
-   | stellarRad          | Radius of the host star of the system.                     |
-   +---------------------+------------------------------------------------------------+
-   | velBins             | Minimum number of bins in the velocity domain. No change   |
-   |                     | necessary (more info at (add hyperlink to explanation)).   |
-   +---------------------+------------------------------------------------------------+
-   | maxBinWidth         | Limits the bins width (and therefore sets a lower bound for|
-   |                     | the number of velocity bins per voxel). Unit is in m/s     |
-   |                     | (defaults to 10,000 m/s = 10 km/s).                        |
-   +---------------------+------------------------------------------------------------+
+   minWavelength, maxWavelength
+      Define the range of the simulation.
 
+   highResWidth
+      Defines the region width around each line with high resolution (line centre +/- highResWidth/2).
 
+   resLow, resHigh
+      Define the resolution of the two regions. Usually, changing this is not necessary.
 
-dataFolder
-   subfolder name of AMITIS simulation as specified by user
+   specList
+      The list of species to analyze in the simulation. Be aware that they have to match with species included in the AMITIS simulation.
 
-fieldFileName and partFileName
-   names of the AMITIS simulation files (without the .h5 ending)
+   stellarRad
+      Radius of the host star of the system.
 
-"nCores"
-   number of cores to use. Due to overheading, a number larger than 30 cores leads to a slowdown and is not recommended.
+   velBins
+      Minimum number of bins in the velocity domain. No change necessary (more info at (add hyperlink to explanation)).
+
+   maxBinWidth
+      Limits the bins width (and therefore sets a lower bound for the number of velocity bins per voxel). Unit is in m/s (defaults to 10,000 m/s = 10 km/s).
+
+   dataFolder
+      subfolder name of AMITIS simulation as specified by user
+
+   fieldFileName and partFileName
+      names of the AMITIS simulation files (without the .h5 ending)
+
+   nCores
+      number of cores to use. Due to overheading, a number larger than 30 cores leads to a slowdown and is not recommended.
