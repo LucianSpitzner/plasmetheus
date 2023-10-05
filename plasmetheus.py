@@ -310,7 +310,9 @@ class plasmetheusSimulation:
         if exists(DIRPATH + "/data/" + self.simParams["dataFolder"] + "/" + self.simParams["partFileName"] + "_filtered.h5"):
             
             raise FileExistsError("Filtered AMITIS particle file already exists. Function call is likely bugged.")
-                                  
+
+        print('Filtered file not found. It will be created now. This can take a few minutes.')
+
         with h5py.File(DIRPATH + '/data/' + self.simParams["dataFolder"] + "/" + self.simParams["partFileName"] + '.h5') as partFile:
             
             # read SIDs in field file to exclude hydrogen

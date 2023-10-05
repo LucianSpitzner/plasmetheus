@@ -13,5 +13,6 @@
     
     "dataFolder": "amitisSimFolder",
     "fieldFileName": "Amitis_fld",
-    "partFileName": "Amitis_par"
+    "partFileName": "Amitis_par",
+    "nCores": 20
 }
