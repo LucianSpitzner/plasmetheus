@@ -6,7 +6,7 @@ build:
     python: "mambaforge-22.9"
   jobs:
     pre_build:
-      - sphinx-apidoc --tocfile api -o docs/source/ .
+      - sphinx-apidoc --tocfile api -H API -o docs/source/ .
       - cat docs/source/api.rst
 
 
