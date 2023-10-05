@@ -25,11 +25,11 @@ The important files and folders created are the following
 plasmetheus.py
     the the main script,
 
-.. _setupFiles:
+
 setupFiles
     folder that contains your setupFiles. Multiple setupFiles for the same AMITIS simulation can exist.
 
-.. _data:
+
 data
     folder for subfolders for each AMITIS simulation. Note that subfolders must be created by the user.
 
@@ -41,13 +41,13 @@ Setup
 Data
 ----
 
-To use Plasmetheus, create a subdirectory in the :ref:'data <data>' folder and move your AMITIS simulation files there. These consist of two
+To use Plasmetheus, create a subdirectory in the :term:'data' folder and move your AMITIS simulation files there. These consist of two
 .h5 files: The field file (fld), which contains information about the magnetic field and the (charge) density in the simulation box, and the
 particle file (par), which contains six-dimensional spatial and velocity information for tracer particles. 
 
 SetupFile
 ---------
-For each run of Plasmetheus, you can configure the settings with the .json files provided in the :ref:'setupFiles directory<setupFiles>'.
+For each run of Plasmetheus, you can configure the settings with the .json files provided in the :term:'setupFiles'.
 
 outputName
    name of the plasmetheus simulation result file.
