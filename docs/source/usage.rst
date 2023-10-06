@@ -99,4 +99,7 @@ Then, run the code with::
    python3 plasmetheus.py <setupFileName>
 
 If the specific AMITIS simulation has not been analysed before, Plasmetheus will create a filtered particle file and place it into the
-corresponding data folder. Then, it will start the simulation.
+corresponding data folder. Then, it will start the calculations.
+
+Results are placed into the results directory, named as specified in the setup file. 
+
