@@ -19,7 +19,10 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
+    'sphinx_automodapi.automodapi',
 ]
+
+numpydoc_show_class_members = False
 
 autodoc_default_options = {
     'special-members': '__init__'
