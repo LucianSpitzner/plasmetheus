@@ -14,4 +14,4 @@ dependencies:
   - gitpython
   - pip
   - sphinx
-  - sphinx-pdj-theme
+  - astropy-sphinx-theme
