@@ -1,7 +1,6 @@
 # Configuration file for the Sphinx documentation builder.
 import os
 import sys
-import sphinx_pdj_theme
 sys.path.append(os.path.abspath('../..'))
 # -- Project information
 
