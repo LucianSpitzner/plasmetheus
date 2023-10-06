@@ -41,13 +41,5 @@ templates_path = ['_templates']
 
 html_theme = 'bootstrap-astropy'
 
-# Custom sidebar templates, maps document names to template names. (from astropy_theme)
-html_sidebars = {
-    '**': ['localtoc.html'],
-    'search': [],
-    'genindex': [],
-    'py-modindex': [],
-}
-
 # -- Options for EPUB output
 epub_show_urls = 'footnote'
