@@ -41,5 +41,7 @@ templates_path = ['_templates']
 
 html_theme = 'bootstrap-astropy'
 
+html_domain_indices = False
+
 # -- Options for EPUB output
 epub_show_urls = 'footnote'
