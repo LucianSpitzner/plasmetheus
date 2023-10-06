@@ -7,7 +7,6 @@ build:
   jobs:
     pre_build:
       - sphinx-apidoc --tocfile api -H API -o docs/source/ .
-      - cat docs/source/api.rst
 
 
       
