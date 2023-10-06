@@ -25,8 +25,11 @@ extensions = [
 numpydoc_show_class_members = False
 
 autodoc_default_options = {
-    'special-members': '__init__'
+    'special-members': '__init__',
+    'show-inheritance': False,
 }
+
+
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
