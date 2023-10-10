@@ -14,5 +14,6 @@
     
     "dataFolder": "amitisSimFolder",
     "fieldFileName": "Amitis_fld",
-    "partFileName": "Amitis_par"
+    "partFileName": "Amitis_par",
+    "saveCompleteAbs": True
 }

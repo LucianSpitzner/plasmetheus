@@ -615,6 +615,10 @@ class plasmetheusSimulation:
             
             resFile.attrs['speciesList'] = self.simParams['specList']
         
+            if self.simParams['saveCompleteAbs']:
+
+                resFile['allAbs'] = absorption
+
         print('Plasmetheus exits now.')
         
 
