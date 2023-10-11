@@ -501,7 +501,7 @@ class plasSim:
                         # arbitrarily setting bin width to 1 km/s (1e5cm/s)
                         deltaV = 1e5
                        
-                       
+
                         vel_x = np.array(v_m)[None, :, None]
 
                         pv_x = pv_m[None, :, None]
@@ -570,8 +570,8 @@ class plasSim:
 
             # parallelization using joblib
 
-            spec_tau, binwidth, nparts, col_id = zip(*Parallel(n_jobs=self.simParams["nCores"], verbose=1)(
-                delayed(calc_col_tau)(col_id, column) for col_id, column in columnTable
+            spec_tau, binwidth, nparts, col_id = zip(*Parallel(n_jobs=self.simParams["nCores"], verbose=0)(
+                delayed(calc_col_tau)(col_id, column) for col_id, column in tqdm(columnTable)
                 )
             )
 
