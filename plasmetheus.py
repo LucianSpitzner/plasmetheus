@@ -21,7 +21,7 @@ from joblib import Parallel, delayed
 
 DIRPATH = os.path.dirname(os.path.abspath(__file__))
 
-class plasmetheusSimulation:
+class plasSim:
     
     
     def __init__(self, setupFileName):
@@ -660,7 +660,7 @@ if __name__ == '__main__':
 
     setupFileName = str(sys.argv[1]) 
 
-    mysim = plasmetheusSimulation(setupFileName)
+    mysim = plasSim(setupFileName)
         
     mysim.setup()
 
