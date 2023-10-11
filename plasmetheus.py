@@ -469,7 +469,7 @@ class plasSim:
                            
         for specID, spec in enumerate(self.simParams['specList']):
             
-            print(f'Grouping by columns for species {spec}', end='...')
+            print(f'Grouping by columns for species {spec}', end='...', flush=True)
             
             # select species and group by column
             columnTable = (self.partData[self.partData['sid'] == self.fldParams[spec]]).groupby('loc_id_column')
@@ -655,12 +655,6 @@ class plasSim:
         print('Plasmetheus exits now.')
         
 
-
-if __name__ == '__main__':
-
-    if(len(sys.argv) != 2 ):
-
-        raise ValueError("Arguments are not set correctly!")
 
 if __name__ == '__main__':
 
