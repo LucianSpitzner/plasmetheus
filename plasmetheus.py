@@ -33,10 +33,6 @@ class plasmetheusSimulation:
         setupFile : str
             name of setupFile in /data/setupFiles.
 
-        Returns
-        -------
-        None.
-
         """
         
         
@@ -60,6 +56,17 @@ class plasmetheusSimulation:
 
 
     def readLineList(self, species):
+                    
+        '''
+        Read transitions of all specified species within wavelength range
+
+        Parameters
+        ----------
+        species : list
+            List of all species.
+
+        '''
+
         
         def minFWHM(centre):
             '''
@@ -118,10 +125,24 @@ class plasmetheusSimulation:
     
     def buildGrid(self):
         """
-        builds the grid set by minWavelength and maxWavelength, as 
+        builds the wavelength grid set by minWavelength and maxWavelength, as 
         well as resLow, resHigh and highResWidth. High-res regions are centered 
-        in the original line position, and embedded in the uniform 
+        on the original line position, and embedded in the uniform 
         low-res-region.
+
+        Uses
+        ----
+            minWavelength : float
+                Lower bound of the grid
+            maxWavelength : float
+                Upper bound of the grid
+            resHigh : float
+                Resolution of the grid within high-res regions
+            highResWidth : float
+                Width of the high-resolution region around each transition line centre
+            resLow : float
+                Resolution of the low-resolution region 
+
         
         Saves both the wavelength (wvl) and frequency (freq) grid.
         """
@@ -176,7 +197,9 @@ class plasmetheusSimulation:
         wavelength = np.sort(np.concatenate(grid))
         
         self.simParams["grid_wvl"] = wavelength
+        
         self.simParams["grid_freq"] = const.c/wavelength
+
         self.simParams["gridLen"] = len(wavelength)
         
 
@@ -188,11 +211,6 @@ class plasmetheusSimulation:
         Also reads the particle densities from the field file, turning them 
         into the required column densities. At this moment, only assumes
         single ionised species.
-
-
-        Returns
-        -------
-        None.
 
         """
         
@@ -302,10 +320,6 @@ class plasmetheusSimulation:
         hID : int, optional
             ID of the SID of hydrogen in the AMITIS files. The default is 0.
 
-        Returns
-        -------
-        None.
-
         """
     
     
@@ -396,10 +410,6 @@ class plasmetheusSimulation:
             folder name containing desired AMITIS output
             in /data. Must contain a  field and (at least one) particle file.
 
-        Returns
-        -------
-        None.
-
         """
         
         if not exists(DIRPATH + "/data/" + self.simParams["dataFolder"] + "/" + self.simParams["partFileName"] + "_filtered.h5"):
@@ -426,6 +436,9 @@ class plasmetheusSimulation:
     
     
     def setup(self):
+        """
+        Set the Plasmetheus simulation up, reading the setupFile, the field- and the particle file.
+        """
         
         self.buildGrid()
         
@@ -434,6 +447,9 @@ class plasmetheusSimulation:
         self.readPartFile()
         
     def simulate(self):
+        '''
+        Start the simulation.
+        '''
         
         all_tau = np.zeros((self.simParams['ns'], 
                             self.fldParams['ny'], 
@@ -549,10 +565,11 @@ class plasmetheusSimulation:
                 return (column_tau , deltaV, len(voxel['vx']), col_id)
 
         
-            print(f"Calculating optical depth for {spec}")
+            print(f"Calculating optical depth for {spec}:")
 
+            # parallelization using joblib
             spec_tau, binwidth, nparts, col_id = zip(*Parallel(n_jobs=self.simParams["nCores"], verbose=1)(
-                delayed(calc_col_tau)(col_id, column) for col_id, column in tqdm(columnTable)
+                delayed(calc_col_tau)(col_id, column) for col_id, column in columnTable
                 )
             )
 
