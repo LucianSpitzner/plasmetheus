@@ -8,3 +8,4 @@ resources/__pycache__
 !setupFiles/setup_help.json
 !data/.gitkeep
 !data/.gitkeep
+plotphases.py
