@@ -11,9 +11,10 @@
 	"stellarRad": 1,
     "velBins": 100,
     "maxBinWidth": 10000,
+    "customGamma": 1,
     
     "dataFolder": "amitisSimFolder",
     "fieldFileName": "Amitis_fld",
     "partFileName": "Amitis_par",
-    "saveCompleteAbs": True
+    "saveCompleteAbs": true
 }

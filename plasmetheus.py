@@ -26,6 +26,7 @@ class plasmetheusSimulation:
     
     def __init__(self, setupFileName):
         """
+        Read the setup file.
     
         Parameters
         ----------
@@ -60,26 +61,25 @@ class plasmetheusSimulation:
 
     def readLineList(self, species):
         
-        def minFWHM(centre, deltaV=1):
+        def minFWHM(centre):
             '''
+            Increase the intrinsic line width of a transition to a value corresponding to "customGamma" (in km/s).
 
             Parameters
             ----------
             centre : float
                 centre of line in cm.
-            deltaV : float, optional
-                velocity dispersion in km/s. The default is 1.
 
             Returns
             -------
             float
-                HWHM of absorption peak at centre with width of deltaV.
+                width (adjusted) of absorption peak
 
             '''
             
             # (c/lambda * delta_v/c = delta_v/lambda
             # multiply by 2 pi to get from FWHM to gamma 
-            return 2*np.pi * (deltaV*1e5) / centre
+            return 2*np.pi * (self.simParams['customGamma']*1e5) / centre
         
         LineList = np.loadtxt(DIRPATH + '/resources/LineList.txt', dtype = str, usecols = (0, 1, 2, 3, 4), skiprows = 1)
 
@@ -96,9 +96,16 @@ class plasmetheusSimulation:
         line_f = line_f[SEL_SPECIES * SEL_COMPLETE].astype(float)
 
         # see if the line width is wide enough (at least 1 km/s)
-        min_gamma = minFWHM(line_wavelength)
-        line_gamma = np.max((original_gamma, min_gamma), axis=0)
+        if self.simParams['customGamma']:
+
+            min_gamma = minFWHM(line_wavelength)
+            
+            line_gamma = np.max((original_gamma, min_gamma), axis=0)
         
+        else:
+
+            line_gamma = original_gamma
+
         SEL_WAVELENGTH = (line_wavelength > self.simParams["minWavelength"]) * (line_wavelength < self.simParams["maxWavelength"])
 
         n_incr = np.sum(np.array(original_gamma[SEL_WAVELENGTH]) < np.array(min_gamma[SEL_WAVELENGTH]))
@@ -614,7 +621,11 @@ class plasmetheusSimulation:
             resFile.attrs['stellarRadius'] = self.simParams['stellarRad']
             
             resFile.attrs['speciesList'] = self.simParams['specList']
-        
+
+            if self.simParams['savePhaseAbs']:
+
+                resFile['phaseAbs'] = np.sum(absorption, axis=1)
+
             if self.simParams['saveCompleteAbs']:
 
                 resFile['allAbs'] = absorption
