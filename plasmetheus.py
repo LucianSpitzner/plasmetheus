@@ -17,35 +17,28 @@ import sys
 import json
 import resources.constants as const
 import matplotlib.pyplot as plt
+from joblib import Parallel, delayed
 
 DIRPATH = os.path.dirname(os.path.abspath(__file__))
 
-class plasmetheusSimulation:
+class plasSim:
     """
     Class of the Plasmetheus simulation
-    Parameters
-    ----------
-    Returns
-    -------
-    None.
     """
     
     
     def __init__(self, setupFileName):
         """
+        Read the setup file.
     
         Parameters
         ----------
         setupFile : str
             name of setupFile in /data/setupFiles.
 
-        Returns
-        -------
-        None.
-
         """
         
-        self.simParams = {}
+        
         self.fldParams = {}
         self.lineParams = {}
         self.simRes = {}
@@ -61,29 +54,42 @@ class plasmetheusSimulation:
         
         self.simParams["stellarRad"] = self.simParams["stellarRad"] * const.R_sun
 
+        # add name
+        self.simParams['setupFileName'] = setupFileName
+
 
     def readLineList(self, species):
+                    
+        '''
+        Read transitions of all specified species within wavelength range
+
+        Parameters
+        ----------
+        species : list
+            List of all species.
+
+        '''
+
         
-        def minFWHM(centre, deltaV=1):
+        def minFWHM(centre):
             '''
+            Increase the intrinsic line width of a transition to a value corresponding to "customGamma" (in km/s).
 
             Parameters
             ----------
             centre : float
                 centre of line in cm.
-            deltaV : float, optional
-                velocity dispersion in km/s. The default is 1.
 
             Returns
             -------
             float
-                HWHM of absorption peak at centre with width of deltaV.
+                width (adjusted) of absorption peak
 
             '''
             
             # (c/lambda * delta_v/c = delta_v/lambda
             # multiply by 2 pi to get from FWHM to gamma 
-            return 2*np.pi * (deltaV*1e5) / centre
+            return 2*np.pi * (self.simParams['customGamma']*1e5) / centre
         
         LineList = np.loadtxt(DIRPATH + '/resources/LineList.txt', dtype = str, usecols = (0, 1, 2, 3, 4), skiprows = 1)
 
@@ -100,9 +106,16 @@ class plasmetheusSimulation:
         line_f = line_f[SEL_SPECIES * SEL_COMPLETE].astype(float)
 
         # see if the line width is wide enough (at least 1 km/s)
-        min_gamma = minFWHM(line_wavelength)
-        line_gamma = np.max((original_gamma, min_gamma), axis=0)
+        if self.simParams['customGamma']:
+
+            min_gamma = minFWHM(line_wavelength)
+            
+            line_gamma = np.max((original_gamma, min_gamma), axis=0)
         
+        else:
+
+            line_gamma = original_gamma
+
         SEL_WAVELENGTH = (line_wavelength > self.simParams["minWavelength"]) * (line_wavelength < self.simParams["maxWavelength"])
 
         n_incr = np.sum(np.array(original_gamma[SEL_WAVELENGTH]) < np.array(min_gamma[SEL_WAVELENGTH]))
@@ -115,10 +128,24 @@ class plasmetheusSimulation:
     
     def buildGrid(self):
         """
-        builds the grid set by minWavelength and maxWavelength, as 
+        builds the wavelength grid set by minWavelength and maxWavelength, as 
         well as resLow, resHigh and highResWidth. High-res regions are centered 
-        in the original line position, and embedded in the uniform 
+        on the original line position, and embedded in the uniform 
         low-res-region.
+
+        Uses
+        ----
+            minWavelength : float
+                Lower bound of the grid
+            maxWavelength : float
+                Upper bound of the grid
+            resHigh : float
+                Resolution of the grid within high-res regions
+            highResWidth : float
+                Width of the high-resolution region around each transition line centre
+            resLow : float
+                Resolution of the low-resolution region 
+
         
         Saves both the wavelength (wvl) and frequency (freq) grid.
         """
@@ -173,7 +200,9 @@ class plasmetheusSimulation:
         wavelength = np.sort(np.concatenate(grid))
         
         self.simParams["grid_wvl"] = wavelength
+        
         self.simParams["grid_freq"] = const.c/wavelength
+
         self.simParams["gridLen"] = len(wavelength)
         
 
@@ -185,11 +214,6 @@ class plasmetheusSimulation:
         Also reads the particle densities from the field file, turning them 
         into the required column densities. At this moment, only assumes
         single ionised species.
-
-
-        Returns
-        -------
-        None.
 
         """
         
@@ -299,10 +323,6 @@ class plasmetheusSimulation:
         hID : int, optional
             ID of the SID of hydrogen in the AMITIS files. The default is 0.
 
-        Returns
-        -------
-        None.
-
         """
     
     
@@ -330,16 +350,17 @@ class plasmetheusSimulation:
             zmin, zmax = self.fldParams["zmin"], self.fldParams["zmax"]
             pl_rad = self.fldParams["obs_radius"]
             
-            
+            print('    Reading positions')
             # read positions of non-H particles
             rx = np.array(partFile['rx'])[hydrogenMask]
             ry = np.array(partFile['ry'])[hydrogenMask]
             rz = np.array(partFile['rz'])[hydrogenMask]
             
+            print('    Reading velocities')
             # read x-components of velocities of non-H particles
             vx = np.array(partFile['vx'])[hydrogenMask]
             
-            
+            print('    constructing grid')
             # construct the grid
             xrange, xstep = np.linspace(xmin, xmax, num=nx, endpoint=False, retstep=True)
             
@@ -348,21 +369,21 @@ class plasmetheusSimulation:
             zrange, zstep = np.linspace(zmin, zmax, num=nz, endpoint=False, retstep=True)
             
             # find particles position in x,y,z index coordinates
-
+            print('    locating particles')
             xpos = np.searchsorted(xrange, rx) - 1
 
             ypos = np.searchsorted(yrange, ry) - 1
 
             zpos = np.searchsorted(zrange, rz) - 1
             
-            
+            print('    find 2d and 3d flattened index')
             # flatten 3-dim index (voxels)
             loc_id = np.ravel_multi_index((xpos, ypos, zpos), (nx, ny, nz), mode='clip')
             
             # flatten 2-dim index (columns)
             loc_id_column = np.ravel_multi_index((ypos, zpos), (ny, nz), mode='clip')                         
-            
-            
+            print(len(loc_id_column))
+            print('    removing obstructed particles')
             # exclude particles obstructed by planet
             vMask = np.sqrt(ry**2 + rz**2) > pl_rad
             
@@ -371,7 +392,7 @@ class plasmetheusSimulation:
             
 
             # create filtered h5py file
-            
+            print('    creating new file')
             with h5py.File(DIRPATH + '/data/' + self.simParams["dataFolder"] + "/" + self.simParams["partFileName"] + '_filtered.h5', 'w-') as newFile:
 
                 newFile['sid'] = newSid[vMask]
@@ -393,10 +414,6 @@ class plasmetheusSimulation:
         folderName : str
             folder name containing desired AMITIS output
             in /data. Must contain a  field and (at least one) particle file.
-
-        Returns
-        -------
-        None.
 
         """
         
@@ -424,6 +441,9 @@ class plasmetheusSimulation:
     
     
     def setup(self):
+        """
+        Set the Plasmetheus simulation up, reading the setupFile, the field- and the particle file.
+        """
         
         self.buildGrid()
         
@@ -432,16 +452,19 @@ class plasmetheusSimulation:
         self.readPartFile()
         
     def simulate(self):
-        
-        binwidths = np.array([])
-        
-        nparts = np.array([])
+        '''
+        Start the simulation.
+        '''
         
         all_tau = np.zeros((self.simParams['ns'], 
                             self.fldParams['ny'], 
                             self.fldParams['nz'], 
                             self.simParams['gridLen']))
         
+        binwidths_all = []
+        nparts_all = []
+
+
         freq_x = self.simParams['grid_freq'][:, None, None]
                            
         for specID, spec in enumerate(self.simParams['specList']):
@@ -450,7 +473,7 @@ class plasmetheusSimulation:
             
             # select species and group by column
             columnTable = (self.partData[self.partData['sid'] == self.fldParams[spec]]).groupby('loc_id_column')
-             
+
             print('done!')
             
             
@@ -461,15 +484,14 @@ class plasmetheusSimulation:
 
             
             # calculating optical depth
-            
-            print('Calculating optical depth...')
-            
-            for col_id, column in tqdm(columnTable):
+
+            # parallelized function: take one column as input, and calculate the optical depth per wavelength
+
+            def calc_col_tau(col_id, column):
                 
                 column_tau = np.zeros((self.simParams['gridLen']))
                                    
                 for vid, voxel in column.groupby('loc_id'):
-                    
                     
                     if len(voxel['vx']) == 1:
                         
@@ -479,9 +501,9 @@ class plasmetheusSimulation:
                         # arbitrarily setting bin width to 1 km/s (1e5cm/s)
                         deltaV = 1e5
                         
-                        binwidths = np.append(binwidths, deltaV)
+                        #(self.binwidths).append(deltaV)
                         
-                        nparts = np.append(nparts, 1)
+                        #nparts = np.append(nparts, 1)
                         
                        
                         vel_x = np.array(v_m)[None, :, None]
@@ -519,11 +541,12 @@ class plasmetheusSimulation:
 
                         deltaV = (v[1] - v[0])
                         
+                        #fix binwidth saving
                         # save binwidths for statistics 
-                        binwidths = np.append(binwidths, deltaV)
+                        #binwidths = np.append(binwidths, deltaV)
                         
                         # number of particles
-                        nparts = np.append(nparts, len(voxel['vx']))
+                        #nparts = np.append(nparts, len(voxel['vx']))
                         
                         # velocities and their probabilities in the voxel
                         pv_m, v_m = pv[pv_mask], v[:-1][pv_mask] + deltaV/2
@@ -531,7 +554,7 @@ class plasmetheusSimulation:
                         vel_x = v_m[None, :, None]
                         pv_x= pv_m[None, :, None]
 
-                        # here the magic happens
+                        # Thesis Spitzner Eq. 2.15 with broadcasting
                         tau_arr = deltaV * const.e**2 * np.pi / (const.m_e*const.c) * np.sum(
                                 (
                                     (4*gamma_x) / 
@@ -540,41 +563,60 @@ class plasmetheusSimulation:
                                 )
                                              
                         # multiply with the particle column density at the location (weight)
-                        
                         column_tau += (tau_arr * self.fldDens[spec][vid])
-                    
-        
                 
-                (colY, colZ) = np.unravel_index(col_id, (self.fldParams['ny'], 
+
+                # return optical depth, binwidth and number of particles, and col_id 
+                return (column_tau , deltaV, len(voxel['vx']), col_id)
+
+        
+            print(f"Calculating optical depth for {spec}:")
+
+            # parallelization using joblib
+            spec_tau, binwidth, nparts, col_id = zip(*Parallel(n_jobs=self.simParams["nCores"], verbose=1)(
+                delayed(calc_col_tau)(col_id, column) for col_id, column in columnTable
+                )
+            )
+
+            # find position of columns 
+            (colY, colZ) = np.unravel_index(col_id, (self.fldParams['ny'], 
                                                          self.fldParams['nz']))
-                
-                # add the optical depth
-                all_tau[specID, colY, colZ] = column_tau
-        
+
+            # add the tau in the specific column position 
+            all_tau[specID, colY, colZ] = spec_tau
+
+            # save binwidths and particles for statistics
+            binwidths_all = np.append(binwidths_all, binwidth)
+            nparts_all = np.append(nparts_all, nparts)
+            
         print('Calculation done. Summing over all species and calculating absorption')
         
+        # sum optical depth of all species
         tot_tau = np.sum(all_tau, axis=0)
         
+        # absorption with Beer-Lambert (Spitzner Thesis Eq. 2.6)
         absorption = np.e**(-tot_tau)
 
-        # mask empty columns
+        # mask and count empty columns
         tot_mask = np.sum(np.abs(tot_tau), axis=2) != 0
+
+        n_empty_cols = np.sum(tot_mask)
         
-        #number of non-empty columns
-        nCols = np.sum(tot_mask)
+        print(f'Number of non-empty columns: {n_empty_cols}')
         
-        print(f'Number of non-empty columns: {nCols}')
-        
+        # Area calculation
         # surface area of a single column in cm**2
         columnArea = self.fldParams['dy'] * self.fldParams['dz'] * 1e4
         
+        # surface area of the star
         stellarArea = np.pi * self.simParams['stellarRad']**2
         
+        # surface area of the planet
         planetArea = np.pi * (self.fldParams['obs_radius']*1e2)**2
         
         # relative area of planet, cloud and star
         tot_abs = ((np.sum(absorption[tot_mask], axis=0) * columnArea) +
-               stellarArea - nCols*columnArea - planetArea)/ stellarArea 
+               stellarArea - n_empty_cols*columnArea - planetArea)/ stellarArea 
         
         # save optical depth at highest absorbing wavelength
         # min, since the signal is lowest at that wavelength
@@ -583,8 +625,8 @@ class plasmetheusSimulation:
         maxtau = tot_tau[:,:,maxabs]
         
         print('Saving result')
-        
-        with h5py.File(DIRPATH + '/results/' + self.simParams["fieldFileName"] + '_res.h5', 'w-') as resFile:
+
+        with h5py.File(DIRPATH + '/results/' + self.simParams['setupFileName'] + '_res.h5', 'w-') as resFile:
             
             resFile['absorption'] = tot_abs
             
@@ -592,27 +634,44 @@ class plasmetheusSimulation:
             
             resFile['wavelengths'] = self.simParams['grid_wvl']
             
-            resFile['binwidths'] = binwidths
+            resFile['binwidths'] = binwidths_all
             
-            resFile['partperVoxel'] = nparts
+            resFile['partperVoxel'] = nparts_all
 
             resFile.attrs['velBins'] = self.simParams['velBins']
             
             resFile.attrs['stellarRadius'] = self.simParams['stellarRad']
             
             resFile.attrs['speciesList'] = self.simParams['specList']
-        
+
+            if self.simParams['savePhaseAbs']:
+
+                resFile['phaseAbs'] = np.sum(absorption, axis=1)
+
+            if self.simParams['saveCompleteAbs']:
+
+                resFile['allAbs'] = absorption
+
         print('Plasmetheus exits now.')
         
 
 
+if __name__ == '__main__':
 
+    if(len(sys.argv) != 2 ):
 
+        raise ValueError("Arguments are not set correctly!")
+
+if __name__ == '__main__':
+
+    if(len(sys.argv) != 2 ):
+
+        raise ValueError("Arguments are not set correctly!")
+
+    setupFileName = str(sys.argv[1]) 
+
+    mysim = plasSim(setupFileName)
         
-#%%
+    mysim.setup()
 
-#mysim = plasmetheusSimulation('fiducial')
-    
-#mysim.setup()
-
-#mysim.simulate()
+    mysim.simulate()
