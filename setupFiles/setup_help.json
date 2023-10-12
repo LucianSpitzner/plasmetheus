@@ -9,6 +9,7 @@
 	"specList": ["MgII, CII"],
 	"stellarRad": 1,
     "semiMajorAxis": 1,
+    "orbitalPeriod": 10,
     
     "velBins": 100,
     "maxBinWidth": 10000,

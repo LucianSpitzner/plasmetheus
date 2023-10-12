@@ -50,11 +50,17 @@ class plasSim:
             self.simParams['ns'] = len(self.simParams["specList"])
 
 
-        # change certain values from SI to CGS
-        
+        # change certain values to CGS
+
         self.simParams["stellarRad"] = self.simParams["stellarRad"] * const.R_sun
 
+        self.simParams["semiMajorAxis"] *= const.AU
+
+        self.simParams['orbitalPeriod'] *=24*60*60
+
+
         # add name
+
         self.simParams['setupFileName'] = setupFileName
 
 
@@ -462,8 +468,8 @@ class plasSim:
                             self.simParams['gridLen']))
         
         binwidths_all = []
-
         nparts_all = []
+
 
         freq_x = self.simParams['grid_freq'][:, None, None]
                            
@@ -500,7 +506,6 @@ class plasSim:
                         
                         # arbitrarily setting bin width to 1 km/s (1e5cm/s)
                         deltaV = 1e5
-                       
 
                         vel_x = np.array(v_m)[None, :, None]
 
@@ -519,7 +524,6 @@ class plasSim:
                         
                         column_tau += tau_arr * self.fldDens[spec][vid]
                     
-
                     else:
                         
                         # limit maximum bin width, also given in m/s
@@ -531,26 +535,22 @@ class plasSim:
                     
                         
                         #setting number of bins, also converting m/s to cm/s
-
                         pv, v = np.histogram(np.float64(voxel['vx']*1e2), bins=int(nBins), density=True)
                     
                         
                         # ingore velocities that don't exist in the voxel
-
                         pv_mask = pv != 0
 
                         deltaV = (v[1] - v[0])
                         
 
                         # velocities and their probabilities in the voxel
-
                         pv_m, v_m = pv[pv_mask], v[:-1][pv_mask] + deltaV/2
 
                         vel_x = v_m[None, :, None]
                         pv_x= pv_m[None, :, None]
 
                         # Thesis Spitzner Eq. 2.15 with broadcasting
-
                         tau_arr = deltaV * const.e**2 * np.pi / (const.m_e*const.c) * np.sum(
                                 (
                                     (4*gamma_x) / 
@@ -569,27 +569,20 @@ class plasSim:
             print(f"Calculating optical depth for {spec}:")
 
             # parallelization using joblib
-
-            spec_tau, binwidth, nparts, col_id = zip(*Parallel(n_jobs=self.simParams["nCores"], verbose=0)(
-                delayed(calc_col_tau)(col_id, column) for col_id, column in tqdm(columnTable)
+            spec_tau, binwidth, nparts, col_id = zip(*Parallel(n_jobs=self.simParams["nCores"], verbose=1)(
+                delayed(calc_col_tau)(col_id, column) for col_id, column in columnTable
                 )
             )
 
             # find position of columns 
-
             (colY, colZ) = np.unravel_index(col_id, (self.fldParams['ny'], 
                                                          self.fldParams['nz']))
 
-
             # add the tau in the specific column position 
-
             all_tau[specID, colY, colZ] = spec_tau
 
-
             # save binwidths and particles for statistics
-
             binwidths_all = np.append(binwidths_all, binwidth)
-
             nparts_all = np.append(nparts_all, nparts)
             
         print('Calculation done. Summing over all species and calculating absorption')
