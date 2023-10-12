@@ -8,6 +8,8 @@
 
 	"specList": ["MgII, CII"],
 	"stellarRad": 1,
+    "semiMajorAxis": 1,
+    
     "velBins": 100,
     "maxBinWidth": 10000,
     "customGamma": 1,
