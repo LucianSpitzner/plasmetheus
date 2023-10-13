@@ -1,7 +1,9 @@
 #%%
 import numpy as np
+import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import copy
 import h5py
 import sys
 import plasmetheus
@@ -54,7 +56,7 @@ def plotPhases(plasSim):
 
     nz = plasSim.fldParams['nz']
 
-    print('Calculating phase-wise absorption..')
+    print('Calculating phase-wise absorption..', end=' ')
 
     for y in range(1, nStellar + ny):
 
@@ -84,17 +86,28 @@ def plotPhases(plasSim):
         
         allWV[y-1] = wavel*(1 + v_rad/const.c)
 
-
+    print('done!')
 
     fig, ax = plt.subplots(figsize=(17,12))
+
+    # stellar disc and cloud
+
+    # stellar circle
+    stellardisc = patches.Circle((0,0), radius=plasSim.simParams['stellarRad']/1e2, fill=False)
+
+    cmap = plt.get_cmap('turbo').copy()
+    cmap.set_bad('white')
+
+    # filter out zeros from density
+    plasSim.fldDens['totDens'].T[plasSim.fldDens['totDens'].T == 0] = np.NaN
 
     totmin = np.min(np.min(allSlices, axis=(0,1)))
     totmax = np.max(np.max(allSlices, axis=(0,1)))
 
-
-
     # Function to update the plot for each frame
     def update(frame):
+
+        # spectrum
         ax.clear()
         maxabs = allWV[frame][np.argmin(allSlices[frame])]  
         ax.axvline(maxabs, ls='--', alpha=.5, c='blue')
@@ -105,9 +118,31 @@ def plotPhases(plasSim):
         ax.set_ylim(totmin - 0.05*(1-totmin), 1 + 0.05*(1-totmin)) 
         ax.set_xlim(np.min(wavel), np.max(wavel))
         
+        # moving cloud
+        axins = ax.inset_axes(
+            [0.6,0.05, 0.38,0.5]
+        )
+        axins.add_patch(copy.copy(stellardisc))
+        # set limits slightly larger than size of star
+        axins.set_xlim((-plasSim.simParams['stellarRad']/1e2*1.1, plasSim.simParams['stellarRad']/1e2*1.1))
+        axins.set_ylim((-plasSim.simParams['stellarRad']/1e2*1.1, plasSim.simParams['stellarRad']/1e2*1.1))
+
+        shift = - (stellarMid + planetMid - frame) * plasSim.fldParams['dy']
+
+        # plot density
+        axins.imshow(plasSim.fldDens['totDens'].T,
+                    origin='lower',
+                    extent=[plasSim.fldParams['ymin']+shift,
+                            plasSim.fldParams['ymax']+shift,
+                            plasSim.fldParams['zmin'], 
+                            plasSim.fldParams['zmax']],
+                    vmin=0.01,
+                    cmap=cmap)
+        
+
     # Create the animation
 
-    print("Rendering animation (this can take a few minutes)...", end=' ', flush=True)
+    print("Rendering animation (this can take a few minutes)...", end='', flush=True)
 
     t1 = time.time()
 
@@ -136,6 +171,8 @@ if __name__ == '__main__':
     mysim.readFieldFile()
 
     [mysim.readLineList(key_species) for key_species in mysim.simParams["specList"]]
+
+    mysim.readFieldFile(saveTotDens=True)
 
     plotPhases(mysim)
 

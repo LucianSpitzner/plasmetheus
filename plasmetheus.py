@@ -212,7 +212,9 @@ class plasSim:
         self.simParams["gridLen"] = len(wavelength)
         
 
-    def readFieldFile(self):
+    
+
+    def readFieldFile(self, saveTotDens=False):
         """
         reads the AMITIS field file, adding the simulation box parameters to
         the dictionary self.fldParams
@@ -220,6 +222,11 @@ class plasSim:
         Also reads the particle densities from the field file, turning them 
         into the required column densities. At this moment, only assumes
         single ionised species.
+
+        Parameters
+            ----------
+            saveTotDens : bool
+                if true, saves the summed densities of all non-hydrogen species 
 
         """
         
@@ -315,6 +322,23 @@ class plasSim:
                 specDens = specChargeDens * 1e-6 / 1.602176634e-19 * (field.attrs['dx'] * 1e2)
                 
                 self.fldDens[spec] = specDens
+
+
+            if saveTotDens:
+    
+                ns = field.attrs['ns']
+                
+                den = []
+
+                for s in range(2, ns+1):
+                    
+                    den.append(np.sum(field[f'rho0{s}'][:]/1.6e-19 * 1e-6, axis=0))
+                
+                self.fldDens['totDens'] = np.sum(np.array(den), axis=0)
+
+
+
+
             
         
     def createFilteredFile(self, hID=0):
@@ -506,9 +530,13 @@ class plasSim:
                         
                         # arbitrarily setting bin width to 1 km/s (1e5cm/s)
                         deltaV = 1e5
-
+                        
+                        #(self.binwidths).append(deltaV)
+                        
+                        #nparts = np.append(nparts, 1)
+                        
+                       
                         vel_x = np.array(v_m)[None, :, None]
-
                         pv_x = pv_m[None, :, None]
 
 
@@ -543,7 +571,13 @@ class plasSim:
 
                         deltaV = (v[1] - v[0])
                         
-
+                        #fix binwidth saving
+                        # save binwidths for statistics 
+                        #binwidths = np.append(binwidths, deltaV)
+                        
+                        # number of particles
+                        #nparts = np.append(nparts, len(voxel['vx']))
+                        
                         # velocities and their probabilities in the voxel
                         pv_m, v_m = pv[pv_mask], v[:-1][pv_mask] + deltaV/2
 
