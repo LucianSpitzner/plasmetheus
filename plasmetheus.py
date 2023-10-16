@@ -224,16 +224,15 @@ class plasSim:
         single ionised species.
 
         Parameters
-            ----------
+        ----------
             saveTotDens : bool
                 if true, saves the summed densities of all non-hydrogen species 
+                (used in phase-plotting)
 
         """
         
         def convStateNotation(speciesName):
             """
-            
-
             Parameters
             ----------
             speciesName : str

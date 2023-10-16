@@ -13,27 +13,44 @@ Plasmetheus uses AMITIS files to produce absorption spectra of transiting exopla
 Installation
 ------------
 
-To use Plasmetheus, first download it through git:
+To use Plasmetheus, navigate to your desired location and download it through git:
 
 .. code-block:: console
 
-   (.venv) $ git clone https://github.com/LucianSpitzner/plasmetheus.git
+   $ git clone https://github.com/LucianSpitzner/plasmetheus.git
 
 
-The important files and folders created are the following
+Setting up a virtual environment is recommended. For example, when using conda, do 
+.. code-block:: console
+
+   $ conda create --name plasenv
+   $ conda activate plasenv
+
+and install the requires packages
+.. code-block:: console
+
+   (plasenv) $ conda install numpy h5py pandas matplotlib tqdm joblib
+
+.. note::
+   Dependent on the package, use :code:`(plasenv) $ git install` to install.
+   
+The important files and folders are the following
 
 plasmetheus.py
     the the main script,
 
 
+plotphases.py
+   (provisional) script to plot phase-dependant absorption
+
 setupFiles
     folder that contains your setupFiles. Multiple setupFiles for the same AMITIS simulation can exist.
-
 
 data
     folder for subfolders for each AMITIS simulation. Note that subfolders must be created by the user.
 
-
+figures
+   save location for figures and animations.
 .. _setup:
 
 Setup
@@ -93,7 +110,7 @@ Running the code
 ----------------
 
 Copy the setupFile and adjust the parameters as necessary. 
-To run the code, navigate into the plasmetheus folder using :code:'cd foo/plasmetheus'.
+To run the code, navigate into the plasmetheus folder using :code:`cd foo/plasmetheus`.
 Then, run the code with::
 
    python3 plasmetheus.py <setupFileName>
