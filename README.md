@@ -3,7 +3,8 @@ Radiative transfer of exoplanet exospheres
 
 [![Documentation Status](https://readthedocs.org/projects/plasmetheus/badge/?version=latest)](http://plasmetheus.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) 
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)]
+[![Plasmetheus](https://plasmetheus.readthedocs.io/en/latest/_static/plasIcon.png)]
 
 **P**lanetary **L**ight **A**bsorption and **S**pectroscopy **M**odeling for **E**xoplanetary **T**ransmission and **H**abitability **E**xploration **U**sing **S**cience
 
