@@ -41,6 +41,12 @@ templates_path = ['_templates']
 
 html_theme = 'bootstrap-astropy'
 
+html_theme_options = {
+    'logotext1': project,  # white,  semi-bold
+    'logotext2': '',  # orange, light
+    'logotext3': ':docs'   # white,  light
+    }
+
 html_domain_indices = False
 
 # -- Options for EPUB output

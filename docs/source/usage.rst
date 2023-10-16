@@ -33,24 +33,26 @@ and install the requires packages
 
 .. note::
    Dependent on the package, use :code:`(plasenv) $ git install` to install.
-   
+
 The important files and folders are the following
 
 plasmetheus.py
-    the the main script,
+    the the main script
 
 
 plotphases.py
    (provisional) script to plot phase-dependant absorption
 
 setupFiles
-    folder that contains your setupFiles. Multiple setupFiles for the same AMITIS simulation can exist.
+    folder that contains your setupFiles. Multiple setupFiles for the same AMITIS simulation can exist
 
 data
-    folder for subfolders for each AMITIS simulation. Note that subfolders must be created by the user.
+    folder for subfolders for each AMITIS simulation. Note that subfolders must be created by the user
 
 figures
    save location for figures and animations.
+
+   
 .. _setup:
 
 Setup
