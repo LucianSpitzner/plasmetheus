@@ -39,7 +39,7 @@ templates_path = ['_templates']
 
 # icon
 
-html_favicon = 'plasIcon.ico'
+html_favicon = 'plasIcon.png'
 
 # -- Options for HTML output
 
