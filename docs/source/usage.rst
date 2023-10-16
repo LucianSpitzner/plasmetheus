@@ -52,7 +52,7 @@ data
 figures
    save location for figures and animations.
 
-   
+
 .. _setup:
 
 Setup
