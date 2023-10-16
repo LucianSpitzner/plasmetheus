@@ -21,18 +21,20 @@ To use Plasmetheus, navigate to your desired location and download it through gi
 
 
 Setting up a virtual environment is recommended. For example, when using conda, do 
+
 .. code-block:: console
 
    $ conda create --name plasenv
    $ conda activate plasenv
 
 and install the requires packages
+
 .. code-block:: console
 
    (plasenv) $ conda install numpy h5py pandas matplotlib tqdm joblib
 
 .. note::
-   Dependent on the package, use :code:`(plasenv) $ git install` to install.
+   Dependent on the package, try using :code:`(plasenv) $ git install`.
 
 The important files and folders are the following
 
@@ -81,17 +83,32 @@ For each run of Plasmetheus, you can configure the settings within the .json fil
    resLow, resHigh
       Define the resolution of the two regions. Usually, changing this is not necessary.
 
+
+
    specList
       The list of species to analyze in the simulation. Be aware that they have to match with species included in the AMITIS simulation.
 
    stellarRad
-      Radius of the host star of the system.
+      Radius of the host star of the system in solar radii :math:`(1 R_{\odot} = \num{6.957e8} \mathrm{ m})`
+
+   semiMajorAxis
+      length of the semimajor axis of the planet-star system in astronomical units (au)
+
+   orbitalPeriod
+      period of the orbit in days (d)
+
+
 
    velBins
       Minimum number of bins in the velocity domain. No change necessary (more info at (add hyperlink to explanation)).
 
    maxBinWidth
       Limits the bins width (and therefore sets a lower bound for the number of velocity bins per voxel). Unit is in m/s (defaults to 10,000 m/s = 10 km/s).
+
+   customGamma
+      increase of the intrinsic line width of transition to mimick both velocity distribution of the absorbers as well as telescope resolution
+      value in km/s. best kept at 1
+
 
    dataFolder
       subfolder name of AMITIS simulation as specified by user
@@ -101,6 +118,12 @@ For each run of Plasmetheus, you can configure the settings within the .json fil
 
    nCores
       number of cores to use. Due to overheading, a number larger than 30 cores leads to a slowdown and is not recommended.
+
+   savePhaseAbs
+      boolean: if true, saves absorption for each column-slice (needed for phase-dependant plotting)
+
+   saveCompleteAbs
+      boolean: if true, saves absorption for every radial column (:note:`Will cause a large result file size`)
 
 
 
