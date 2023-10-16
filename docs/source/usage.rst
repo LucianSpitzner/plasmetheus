@@ -141,6 +141,7 @@ To run the code, navigate into the plasmetheus folder using :code:`cd foo/plasme
 Then, run the code with
 
 .. code-block:: console
+   
    (plasenv) $ python3 plasmetheus.py <setupFileName>
 
 If the specific AMITIS simulation has not been analysed before, Plasmetheus will create a filtered particle file and place it into the
