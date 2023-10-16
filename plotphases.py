@@ -17,6 +17,11 @@ DIRPATH = os.path.dirname(os.path.abspath(__file__))
 #%%
 
 def plotPhases(plasSim):
+    """
+    Read the result of a Plasmetheus simulation and create a phase-dependant simulation of the spectrum.
+    To run this, the "savePhaseAbs" parameter in the setupFile has to be set to true.
+
+    """
 
     with h5py.File('results/' + plasSim.simParams['setupFileName'] + '_res.h5', 'r') as file:
 
@@ -34,6 +39,8 @@ def plotPhases(plasSim):
 
     nPhases = nStellar + ny - 1
 
+
+    # initialise result arrays for absorption and wavelength
     allSlices = np.zeros(shape=(nPhases,len(wavel)))
 
     allWV = np.zeros(shape=(nPhases, len(wavel)))
@@ -60,6 +67,7 @@ def plotPhases(plasSim):
 
     for y in range(1, nStellar + ny):
 
+        # index range of plasmetheus simulation result
         miny = np.max([0, ny - y])
 
         maxy = np.min([ny + nStellar - y, ny])
@@ -72,7 +80,7 @@ def plotPhases(plasSim):
         allSlices[y-1] = ((stellarArea - nSlices * nz * columnArea) + (columnArea * selData)) / (stellarArea)
 
 
-        # dopplershift
+        # dopplershift: change in the wavelength range due to orbital radial velocity
 
         shift = - (stellarMid + planetMid - y) * plasSim.fldParams['dy']*1e2
         

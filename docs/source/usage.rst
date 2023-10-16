@@ -36,7 +36,7 @@ and install the requires packages
 .. note::
    Dependent on the package, try using :code:`(plasenv) $ git install`.
 
-The important files and folders are the following
+The important files and directories are the following
 
 plasmetheus.py
     the the main script
@@ -60,12 +60,14 @@ figures
 Setup
 -----
 
-Data
-^^^^
+AMITIS Simulation Data
+^^^^^^^^^^^^^^^^^^^^^^
 
 To use Plasmetheus, create a subdirectory in the data folder and move your AMITIS simulation files there. These consist of two
 .h5 files: The field file (fld), which contains information about the magnetic field and the (charge) density in the simulation box, and the
 particle file (par), which contains six-dimensional spatial and velocity information for tracer particles. 
+
+More information about the .h5 file format can be found at <https://docs.h5py.org/en/stable/>
 
 SetupFile
 ^^^^^^^^^
@@ -89,7 +91,7 @@ For each run of Plasmetheus, you can configure the settings within the .json fil
       The list of species to analyze in the simulation. Be aware that they have to match with species included in the AMITIS simulation.
 
    stellarRad
-      Radius of the host star of the system in solar radii :math:`(1 R_{\odot} = \num{6.957e8} \mathrm{ m})`
+      Radius of the host star of the system in solar radii :math:`(1 R_{\odot} = 6.957e8\,m})`
 
    semiMajorAxis
       length of the semimajor axis of the planet-star system in astronomical units (au)
@@ -135,13 +137,26 @@ Running the code
 ----------------
 
 Copy the setupFile and adjust the parameters as necessary. 
-To run the code, navigate into the plasmetheus folder using :code:`cd foo/plasmetheus`.
-Then, run the code with::
+To run the code, navigate into the plasmetheus folder using :code:`cd foo/plasmetheus`, and make sure your venv is activated.
+Then, run the code with
 
-   python3 plasmetheus.py <setupFileName>
+.. code-block:: console
+   (plasenv) $ python3 plasmetheus.py <setupFileName>
 
 If the specific AMITIS simulation has not been analysed before, Plasmetheus will create a filtered particle file and place it into the
 corresponding data folder. Then, it will start the calculations.
 
 Results are placed into the results directory, named as specified in the setup file. 
 
+
+
+.. note::
+   Preliminary functionality:
+
+.. _phaseplot:
+
+phase-dependant animations
+--------------------------
+
+A phase-dependant animation of the result can be created using :code:`python3 plotphases.py <setupFile>`.
+For this, the option "savePhaseAbs" must be set to true. It will create an animation in the figure-dir.
