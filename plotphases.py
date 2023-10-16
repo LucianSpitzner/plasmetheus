@@ -95,7 +95,7 @@ def plotPhases(plasSim):
     # stellar circle
     stellardisc = patches.Circle((0,0), radius=plasSim.simParams['stellarRad']/1e2, fill=False)
 
-    cmap = plt.get_cmap('turbo').copy()
+    cmap = plt.get_cmap('hot_r').copy()
     cmap.set_bad('white')
 
     # filter out zeros from density
@@ -104,11 +104,12 @@ def plotPhases(plasSim):
     totmin = np.min(np.min(allSlices, axis=(0,1)))
     totmax = np.max(np.max(allSlices, axis=(0,1)))
 
+
     # Function to update the plot for each frame
     def update(frame):
 
         # spectrum
-        ax.clear()
+        ax.cla()
         maxabs = allWV[frame][np.argmin(allSlices[frame])]  
         ax.axvline(maxabs, ls='--', alpha=.5, c='blue')
         for spec in plasSim.simParams['specList']:
