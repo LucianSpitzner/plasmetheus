@@ -123,7 +123,7 @@ For each run of Plasmetheus, you can configure the settings within the .json fil
       boolean: if true, saves absorption for each column-slice (needed for phase-dependant plotting)
 
    saveCompleteAbs
-      boolean: if true, saves absorption for every radial column (:note:`Will cause a large result file size`)
+      boolean: if true, saves absorption for every radial column (Will cause a large result file size)
 
 
 
