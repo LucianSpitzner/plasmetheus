@@ -91,7 +91,7 @@ For each run of Plasmetheus, you can configure the settings within the .json fil
       The list of species to analyze in the simulation. Be aware that they have to match with species included in the AMITIS simulation.
 
    stellarRad
-      Radius of the host star of the system in solar radii :math:`(1 R_{\odot} = 6.957e8\,m})`
+      Radius of the host star of the system in solar radii :math:`(1 R_{\odot} = 6.957e8\,m)`
 
    semiMajorAxis
       length of the semimajor axis of the planet-star system in astronomical units (au)
@@ -141,7 +141,7 @@ To run the code, navigate into the plasmetheus folder using :code:`cd foo/plasme
 Then, run the code with
 
 .. code-block:: console
-   
+
    (plasenv) $ python3 plasmetheus.py <setupFileName>
 
 If the specific AMITIS simulation has not been analysed before, Plasmetheus will create a filtered particle file and place it into the
