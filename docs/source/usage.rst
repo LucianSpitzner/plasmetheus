@@ -83,11 +83,11 @@ For reference, there is a setupTemplate. It contains the following fields:
       general stepsize is `resLow`_, while in regions defined by `highResWidth`_ the stepsize will be `resHigh`_. The latter one must 
       be smaller, indicating a higher resolution.
 
-   highResWidth: float
+   _`highResWidth`: float
       in Angstrom (Å)
       Defines the region width around each line with high resolution (line centre +/- highResWidth/2).
 
-   resLow, resHigh: float
+   _`resLow`, _`resHigh`: float
       in Angstrom (Å)
       Define the resolution of the two regions. Usually, changing this is not necessary.
 
