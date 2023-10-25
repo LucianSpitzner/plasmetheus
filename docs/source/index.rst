@@ -13,5 +13,7 @@ Contents
    :maxdepth: 3
 
    usage
+   running
    results
+   phasePlot
    api

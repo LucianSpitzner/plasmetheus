@@ -127,37 +127,3 @@ For each run of Plasmetheus, you can configure the settings within the .json fil
    saveCompleteAbs
       boolean: if true, saves absorption for every radial column (Will cause a large result file size)
 
-
-
-
-
-.. _running:
-
-Running the code
-----------------
-
-Copy the setupFile and adjust the parameters as necessary. 
-To run the code, navigate into the plasmetheus folder using :code:`cd foo/plasmetheus`, and make sure your venv is activated.
-Then, run the code with
-
-.. code-block:: console
-
-   (plasenv) $ python3 plasmetheus.py <setupFileName>
-
-If the specific AMITIS simulation has not been analysed before, Plasmetheus will create a filtered particle file and place it into the
-corresponding data folder. Then, it will start the calculations.
-
-Results are placed into the results directory, named as specified in the setup file. 
-
-
-
-.. note::
-   Preliminary functionality:
-
-.. _phaseplot:
-
-phase-dependant animations
---------------------------
-
-A phase-dependant animation of the result can be created using :code:`python3 plotphases.py <setupFile>`.
-For this, the option "savePhaseAbs" must be set to true. It will create an animation in the figure-dir.
