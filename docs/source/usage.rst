@@ -65,12 +65,12 @@ AMITIS Simulation Data
 
 To use Plasmetheus, create a subdirectory in the data directory and move your AMITIS simulation files there. These consist of two
 .h5 files: The field file (fld), which contains information about the magnetic field and the (charge) density in the simulation box, and
- the particle file (par), which contains six-dimensional spatial and velocity information for tracer particles. 
-
+the particle file (par), which contains six-dimensional spatial and velocity information for tracer particles.
 More information about the .h5 file format can be found at <https://docs.h5py.org/en/stable/>
 
 SetupFile
 ^^^^^^^^^
+
 For each run of Plasmetheus, you have to specify the simulation settings within a .json file in the setupFile-directory. 
 For reference, there is a setupTemplate. It contains the following fields:
 
