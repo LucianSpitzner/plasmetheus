@@ -657,26 +657,34 @@ class plasSim:
 
         with h5py.File(DIRPATH + '/results/' + self.simParams['setupFileName'] + '_res.h5', 'w-') as resFile:
             
+            # final spectrum
             resFile['absorption'] = tot_abs
             
+            # absorption in every column at maximum absorption wavelength
             resFile['opticalDepth'] = maxtau
             
+            # wavelength grid
             resFile['wavelengths'] = self.simParams['grid_wvl']
             
+            # binwidths per voxel
             resFile['binwidths'] = binwidths_all
             
-            resFile['partperVoxel'] = nparts_all
+            # particles per voxel
+            resFile['nParticles'] = nparts_all
 
+            # copies of info from the simulation setup file
             resFile.attrs['velBins'] = self.simParams['velBins']
             
             resFile.attrs['stellarRadius'] = self.simParams['stellarRad']
             
             resFile.attrs['speciesList'] = self.simParams['specList']
 
+            # save absorption for every vertical slice of columns
             if self.simParams['savePhaseAbs']:
 
                 resFile['phaseAbs'] = np.sum(absorption, axis=1)
 
+            # save absorption for all columns
             if self.simParams['saveCompleteAbs']:
 
                 resFile['allAbs'] = absorption

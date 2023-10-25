@@ -13,4 +13,5 @@ Contents
    :maxdepth: 3
 
    usage
+   results
    api
