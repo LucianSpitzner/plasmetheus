@@ -19,7 +19,7 @@ The results will be saved in the results-directory. They are saved in the .h5-fo
       optical depth in every column at maximum absorbing wavelength
 
 In `'absorption'`_, the result is processed and normalised to give the relative decrease of the stellar spectrum. 
-In `'opticalDepth'`, the result is not yet calculated in reference to the star, but given in the dimensionless optical depth 
+In `'opticalDepth'`_, the result is not yet calculated in reference to the star, but given in the dimensionless optical depth 
 :math:`\tau`.
 
 Optional Parameters

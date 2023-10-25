@@ -97,7 +97,8 @@ For reference, there is a setupTemplate. It contains the following fields:
       The list of species to analyze in the simulation. Currently, Plasmetheus only works with singly ionised species. 
       The correct notation is <elemental symbol> + <ionisation state>, where neutral species get are I, singly ionised (i.e. C+) 
       are II, and so on. Internally, AMITIS uses a different notation, which is converted to the one used on Plasmetheus. 
-      Be aware that the selected species have to match with species included in the AMITIS simulation.
+      Be aware that the selected species have to match with species included in the AMITIS simulation. These can be found 
+      inside the AMITIS field file.
 
    stellarRad: float
       in solar radii :math:`(1 R_{\odot} = 6.957e8\,m)`
@@ -135,8 +136,8 @@ For reference, there is a setupTemplate. It contains the following fields:
       number of cores to use. Due to overheading, a number larger than 30 cores leads to a slowdown and is not recommended.
 
    savePhaseAbs: boolean
-      boolean: if true, saves absorption for each column-slice (needed for phase-dependant plotting)
+      boolean: if *true*, saves absorption for each column-slice (needed for phase-dependant plotting)
 
-   saveCompleteAbs: boolean
-      boolean: if true, saves absorption for every radial column (Will cause a large result file size)
+   saveCompleteTau: boolean
+      boolean: if *true*, saves optical depth at every wavelength for all radial columns (Will cause a large result file size)
 
