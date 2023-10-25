@@ -222,7 +222,7 @@ class plasSim:
         Also reads the particle densities from the field file, turning them 
         into the required column densities. At this moment, only assumes
         single ionised species.
-
+        
         Parameters
         ----------
             saveTotDens : bool
@@ -602,8 +602,8 @@ class plasSim:
             print(f"Calculating optical depth for {spec}:")
 
             # parallelization using joblib
-            spec_tau, binwidth, nparts, col_id = zip(*Parallel(n_jobs=self.simParams["nCores"], verbose=1)(
-                delayed(calc_col_tau)(col_id, column) for col_id, column in columnTable
+            spec_tau, binwidth, nparts, col_id = zip(*Parallel(n_jobs=self.simParams["nCores"], verbose=0)(
+                delayed(calc_col_tau)(col_id, column) for col_id, column in tqdm(columnTable)
                 )
             )
 
