@@ -34,7 +34,7 @@ and install the requires packages
    (plasenv) $ conda install numpy h5py pandas matplotlib tqdm joblib
 
 .. note::
-   Dependent on the package, try using :code:`(plasenv) $ git install`.
+   Dependent on the package, try using :code:`(plasenv) $ pip install <packages>`.
 
 The important files and directories are the following
 
@@ -63,67 +63,80 @@ Setup
 AMITIS Simulation Data
 ^^^^^^^^^^^^^^^^^^^^^^
 
-To use Plasmetheus, create a subdirectory in the data folder and move your AMITIS simulation files there. These consist of two
-.h5 files: The field file (fld), which contains information about the magnetic field and the (charge) density in the simulation box, and the
-particle file (par), which contains six-dimensional spatial and velocity information for tracer particles. 
+To use Plasmetheus, create a subdirectory in the data directory and move your AMITIS simulation files there. These consist of two
+.h5 files: The field file (fld), which contains information about the magnetic field and the (charge) density in the simulation box, and
+ the particle file (par), which contains six-dimensional spatial and velocity information for tracer particles. 
 
 More information about the .h5 file format can be found at <https://docs.h5py.org/en/stable/>
 
 SetupFile
 ^^^^^^^^^
-For each run of Plasmetheus, you can configure the settings within the .json files:
+For each run of Plasmetheus, you have to specify the simulation settings within a .json file in the setupFile-directory. 
+For reference, there is a setupTemplate. It contains the following fields:
 
-   outputName
+   outputName: str
       Name of the plasmetheus simulation result file
 
-   minWavelength, maxWavelength
-      Define the range of the simulation.
+   minWavelength, maxWavelength: float
+      in Angstrom (Å)
+      Defines the range of the simulation. Within these limits, a grid is constructed with two different step-sizes: the
+      general stepsize is `resLow`_, while in regions defined by `highResWidth`_ the stepsize will be `resHigh`_. The latter one must 
+      be smaller, indicating a higher resolution.
 
-   highResWidth
+   highResWidth: float
+      in Angstrom (Å)
       Defines the region width around each line with high resolution (line centre +/- highResWidth/2).
 
-   resLow, resHigh
+   resLow, resHigh: float
+      in Angstrom (Å)
       Define the resolution of the two regions. Usually, changing this is not necessary.
 
 
 
-   specList
-      The list of species to analyze in the simulation. Be aware that they have to match with species included in the AMITIS simulation.
+   specList: list[str]
+      The list of species to analyze in the simulation. Currently, Plasmetheus only works with singly ionised species. 
+      The correct notation is <elemental symbol> + <ionisation state>, where neutral species get are I, singly ionised (i.e. C+) 
+      are II, and so on. Internally, AMITIS uses a different notation, which is converted to the one used on Plasmetheus. 
+      Be aware that the selected species have to match with species included in the AMITIS simulation.
 
-   stellarRad
-      Radius of the host star of the system in solar radii :math:`(1 R_{\odot} = 6.957e8\,m)`
+   stellarRad: float
+      in solar radii :math:`(1 R_{\odot} = 6.957e8\,m)`
+      Radius of the host star of the system 
 
-   semiMajorAxis
-      length of the semimajor axis of the planet-star system in astronomical units (au)
-
+   semiMajorAxis: float
+      in astronomical units (au)
+      length of the semimajor axis of the planet-star system 
    orbitalPeriod
-      period of the orbit in days (d)
+      in days (d)
+      period of the orbit 
 
 
 
-   velBins
+   velBins: int
       Minimum number of bins in the velocity domain. No change necessary (more info at (add hyperlink to explanation)).
 
-   maxBinWidth
-      Limits the bins width (and therefore sets a lower bound for the number of velocity bins per voxel). Unit is in m/s (defaults to 10,000 m/s = 10 km/s).
+   maxBinWidth: float
+      in m/s (defaults to 10,000 m/s = 10 km/s)
+      Limits the bins width (and therefore sets a lower bound for the number of velocity bins per voxel)
 
-   customGamma
+   customGamma: float
+      value in km/s.
       increase of the intrinsic line width of transition to mimick both velocity distribution of the absorbers as well as telescope resolution
-      value in km/s. best kept at 1
+      
 
 
-   dataFolder
-      subfolder name of AMITIS simulation as specified by user
+   dataFolder: str
+      subdirectory of AMITIS simulation as inside data directory specified by user
 
-   fieldFileName and partFileName
+   fieldFileName and partFileName: str
       names of the AMITIS simulation files (without the .h5 ending)
 
-   nCores
+   nCores: int
       number of cores to use. Due to overheading, a number larger than 30 cores leads to a slowdown and is not recommended.
 
-   savePhaseAbs
+   savePhaseAbs: boolean
       boolean: if true, saves absorption for each column-slice (needed for phase-dependant plotting)
 
-   saveCompleteAbs
+   saveCompleteAbs: boolean
       boolean: if true, saves absorption for every radial column (Will cause a large result file size)
 

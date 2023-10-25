@@ -1,7 +1,7 @@
 
 .. _phaseplot:
 
-phase-dependant animations
+Phase-dependant animations
 --------------------------
 
 .. note::
