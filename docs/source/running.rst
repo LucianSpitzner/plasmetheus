@@ -3,7 +3,7 @@
 Running the code
 ----------------
 
-Copy the setupTemplate as expplained in :ref:`setup-File`<setup> and adjust the parameters as necessary. 
+Copy the setupTemplate as expplained in :ref:`setup-File <setup>` and adjust the parameters as necessary. 
 Make sure that you have the AMITIS-data available and in the correct directory.
 To run the code, navigate into the plasmetheus folder using :code:`cd foo/plasmetheus`, and make sure your venv is activated.
 Then, run the code with

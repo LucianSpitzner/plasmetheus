@@ -20,7 +20,7 @@ The results will be saved in the results-directory. They are saved in the .h5-fo
 Optional Parameters
 ^^^^^^^^^^^^^^^^^^^
 
-Depending on the parameters specified in the :ref:`setup-File`<setup>, the following fields are also available:
+Depending on the parameters specified in the :ref:`setup-File <setup>`, the following fields are also available:
 
    'phaseAbs':
       absorption for every vertical slice of columns 
