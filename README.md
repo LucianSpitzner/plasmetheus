@@ -11,7 +11,7 @@ Radiative transfer of exoplanet exospheres
 Plasmetheus is a tool that calculates absorption spectra of exospheric particles around exoplanets. It uses data of the [AMITIS](https://ui.adsabs.harvard.edu/abs/2017JPhCS.837a2017F/abstract) code (Fatemi et. al. 2017)
 
 
-![Plasmetheus Flowchart](docs/flowchart_plasmetheus_modern_dark.png?raw=true)
+[![Plasmetheus Flowchart](docs/flowchart_plasmetheus_modern_dark.png?raw=true)](#)
 
 Documentation
 -------------
