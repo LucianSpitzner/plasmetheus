@@ -141,3 +141,9 @@ For reference, there is a setupTemplate. It contains the following fields:
    saveCompleteTau: boolean
       boolean: if *true*, saves optical depth at every wavelength for all radial columns (Will cause a large result file size)
 
+
+
+
+Additional lines
+^^^^^^^^^^^^^^^^
+In order to add more species, please follow the steps at https://github.com/andreagebek/Prometheus#adding-atomicionic-absorption-lines.
