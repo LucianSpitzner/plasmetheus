@@ -5,6 +5,6 @@ setupFiles/*
 resources/__pycache__
 
 
-!setupFiles/setup_help.json
+!setupFiles/setupTemplate.json
 !data/.gitkeep
 !data/.gitkeep
