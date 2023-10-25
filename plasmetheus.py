@@ -664,7 +664,7 @@ class plasSim:
             resFile['opticalDepth'] = maxtau
             
             # wavelength grid
-            resFile['wavelengths'] = self.simParams['grid_wvl']
+            resFile['wavelength'] = self.simParams['grid_wvl']
             
             # binwidths per voxel
             resFile['binwidths'] = binwidths_all
@@ -685,9 +685,9 @@ class plasSim:
                 resFile['phaseAbs'] = np.sum(absorption, axis=1)
 
             # save absorption for all columns
-            if self.simParams['saveCompleteAbs']:
+            if self.simParams['saveCompleteTau']:
 
-                resFile['allAbs'] = absorption
+                resFile['allTau'] = tot_tau
 
         print('Plasmetheus exits now.')
         

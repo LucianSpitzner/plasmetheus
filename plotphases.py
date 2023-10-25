@@ -27,7 +27,7 @@ def plotPhases(plasSim):
 
         myres = np.array(file['phaseAbs'])
     
-        wavel = np.array(file['wavelengths'])*1e8
+        wavel = np.array(file['wavelength'])*1e8
 
     # number of voxel across stellar disc:
 

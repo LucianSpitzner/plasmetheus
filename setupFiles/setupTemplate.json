@@ -20,5 +20,5 @@
     "nCores": 20,
     
     "savePhaseAbs": true,
-    "saveCompleteAbs": false
+    "saveCompleteTau": false
 }
