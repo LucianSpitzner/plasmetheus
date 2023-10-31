@@ -28,7 +28,7 @@ Optional Parameters
 Depending on the parameters specified in the :ref:`setup-File <setup>`, the following fields are also available:
 
    'phaseAbs':
-      absorption for every vertical slice of columns 
+      absorption (:math:`e^{-\tau}`) for every vertical slice of columns 
 
    'allTau':
       Optical depth for every column (A lot of data!)
