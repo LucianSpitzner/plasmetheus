@@ -117,7 +117,7 @@ def plotPhases(plasSim):
     def update(frame):
 
         # spectrum
-        ax.cla()
+        ax.clear()
         maxabs = allWV[frame][np.argmin(allSlices[frame])]  
         ax.axvline(maxabs, ls='--', alpha=.5, c='blue')
         for spec in plasSim.simParams['specList']:
